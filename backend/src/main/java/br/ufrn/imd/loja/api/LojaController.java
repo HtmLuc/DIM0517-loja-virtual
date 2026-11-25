@@ -30,7 +30,7 @@ public class LojaController {
   public LojaDTO.ProdutoEstoqueDTO retirarEstoque(
     @PathVariable("codigo") final int codigo, @RequestBody final LojaDTO.RetirarEstoqueDTO retirarEstoqueDTO) 
   {
-    return lojaService.retirarDoEstoque(new LojaDTO.RetirarEstoqueDTO(codigo, retirarEstoqueDTO.quantidade()));
+    return lojaService.retirarDoEstoque(codigo, retirarEstoqueDTO);
   }
 
 }

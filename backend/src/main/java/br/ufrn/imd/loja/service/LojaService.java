@@ -41,15 +41,17 @@ public class LojaService
 		return resposta;
 	}
 
-	public LojaDTO.ProdutoEstoqueDTO retirarDoEstoque(final LojaDTO.RetirarEstoqueDTO retirarEstoqueDTO) 
+	public LojaDTO.ProdutoEstoqueDTO retirarDoEstoque(
+		final int codigo, final LojaDTO.RetirarEstoqueDTO retirarEstoqueDTO
+	) 
 	{
 		retirarEstoqueDTO.validar();
 
 		log.info("Saída de estoque de {} unidades para o produto com código {}", 
-			retirarEstoqueDTO.quantidade(), retirarEstoqueDTO.codigo());
+			retirarEstoqueDTO.quantidade(), codigo);
 
-		final Produto produto = this.repositorio.buscar(retirarEstoqueDTO.codigo())
-			.orElseThrow(() -> new ProdutoNaoEncontradoException(retirarEstoqueDTO.codigo()));
+		final Produto produto = this.repositorio.buscar(codigo)
+			.orElseThrow(() -> new ProdutoNaoEncontradoException(codigo));
 
 		validarSaidaDoEstoque(produto, retirarEstoqueDTO.quantidade());
 

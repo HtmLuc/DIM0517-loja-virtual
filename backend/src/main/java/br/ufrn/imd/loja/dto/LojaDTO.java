@@ -66,12 +66,13 @@ public final class LojaDTO
     }
   }
 
-  public record RetirarEstoqueDTO(int codigo, int quantidade) implements InputDTO<Produto>
+  public record RetirarEstoqueDTO(int quantidade) implements InputDTO<Produto>
   {
     @Override
     public Produto toEntity() 
     {
-      return new Produto(codigo, null, quantidade);
+      // TODO: remover esse contrato depois, criar uma nova interface?
+      return new Produto(0, null, quantidade);
     }
 
     @Override
