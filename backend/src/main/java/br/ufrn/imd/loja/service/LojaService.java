@@ -16,6 +16,7 @@ public class LojaService
 
 	public LojaDTO.ProdutoDTO cadastrarProduto(final LojaDTO.CriarProdutoDTO criarProdutoDTO) 
 	{
+		criarProdutoDTO.validar();
 		if (this.repositorio.existe(criarProdutoDTO.codigo())) 
 		{
 			throw new ProdutoJaExisteException(criarProdutoDTO.codigo());

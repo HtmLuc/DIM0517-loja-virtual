@@ -3,6 +3,7 @@ package br.ufrn.imd.loja.dto;
 import java.math.BigDecimal;
 
 import br.ufrn.imd.loja.model.Produto;
+import br.ufrn.imd.loja.service.exception.DadosInvalidosException;
 
 public final class LojaDTO 
 {
@@ -10,6 +11,7 @@ public final class LojaDTO
   private interface InputDTO<T> 
   {
     T toEntity();
+    void validar();
   }
 
   private interface OutputDTO<T> 
@@ -19,7 +21,7 @@ public final class LojaDTO
 
   public record ProdutoDTO(int codigo, BigDecimal preco, int estoque) implements OutputDTO<Produto>
   {
-    public static ProdutoDTO fromEntity(Produto entidade) 
+    public static ProdutoDTO fromEntity(final Produto entidade) 
     {
       return new ProdutoDTO(entidade.getCodigo(), entidade.getPreco(), entidade.getEstoque());
     }
@@ -30,6 +32,18 @@ public final class LojaDTO
     public Produto toEntity() 
     {
       return new Produto(codigo, preco);
+    }
+
+    public void validar() 
+    {
+      if (codigo == 0)
+      {
+        throw new DadosInvalidosException("Código 0 não é permitido.");
+      }
+      if (preco.intValue() < 0) 
+      {
+        throw new DadosInvalidosException("Preços negativos não são permitidos.");
+      }
     }
   }
 
