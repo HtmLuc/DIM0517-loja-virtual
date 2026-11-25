@@ -94,7 +94,13 @@ class ModalConsultarEstoque(ModalScreen[None]):
             res_box.update("[red]Informe um código valido.[/red]")
             return
 
-        resp = self.cliente.get(f"/produto/{codigo_raw}")
+        try:
+            codigo = int(codigo_raw)
+        except ValueError:
+            res_box.update("[red]O código deve ser um número inteiro![/red]")
+            return
+
+        resp = self.cliente.get(f"/produto/{codigo}/estoque")
         if resp.sucesso:
             estoque = resp.corpo.get("estoque", 0)
             res_box.update(f"[green]Estoque Atual:[/green] [bold]{estoque}[/bold] unidades")
