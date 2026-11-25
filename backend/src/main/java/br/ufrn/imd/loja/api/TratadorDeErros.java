@@ -53,7 +53,7 @@ public class TratadorDeErros
 	@ExceptionHandler(EstoqueInsuficienteException.class)
 	public ResponseEntity<ErroResponse> estoqueInsuficiente(final EstoqueInsuficienteException e) 
 	{
-		return erro(HttpStatus.BAD_REQUEST, e.getMessage());
+		return erro(HttpStatus.CONFLICT, e.getMessage());
 	}
 
 	private static ResponseEntity<ErroResponse> erro(HttpStatus status, String mensagem)
