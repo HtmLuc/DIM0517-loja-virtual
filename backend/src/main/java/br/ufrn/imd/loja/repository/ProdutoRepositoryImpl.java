@@ -24,9 +24,10 @@ public class ProdutoRepositoryImpl implements ProdutoRepository
 	}
 
 	@Override
-	public void salvar(Produto produto)
+	public Produto salvar(Produto produto)
 	{
 		produtos.put(produto.getCodigo(), produto);
+		return produtos.get(produto.getCodigo());
 	}
 
 }
