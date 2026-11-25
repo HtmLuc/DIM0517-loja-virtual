@@ -41,6 +41,13 @@ public class LojaController {
   {
     return lojaService.retirarDoEstoque(codigo, retirarEstoqueDTO);
   }
+
+  @PutMapping("/produto/{codigo}/entrada")
+  public LojaDTO.ProdutoEstoqueDTO adicionarEstoque(
+    @PathVariable("codigo") final int codigo, @RequestBody final LojaDTO.RetirarEstoqueDTO entradaEstoqueDTO)
+  {
+    return lojaService.adicionarAoEstoque(codigo, entradaEstoqueDTO);
+  }
  
   @PostMapping("/venda")
   @ResponseStatus(HttpStatus.CREATED)
