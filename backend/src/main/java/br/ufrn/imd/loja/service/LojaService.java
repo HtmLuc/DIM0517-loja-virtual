@@ -75,7 +75,7 @@ public class LojaService
 
 		if (produto.getEstoque() < quantidade) 
 		{
-			throw new EstoqueInsuficienteException("Não foi possível realizar a saída de estoque." 
+			throw new EstoqueInsuficienteException("Não foi possível realizar a saída de estoque. " 
 				+ "A quantidade a ser retirada supera a armazenada."
 			);
 		}
