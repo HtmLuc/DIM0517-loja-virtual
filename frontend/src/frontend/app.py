@@ -213,7 +213,11 @@ class ModalVenda(ModalScreen[None]):
             resp = self.cliente.post("/venda", {"itens": self.itens})
             if resp.sucesso:
                 total = resp.corpo.get("total", "0.00")
-                self.app.notify(f"Venda efetuada! Total: R$ {total}", title="Sucesso", timeout=5)
+                linhas = [
+                    f"Produto {i['codigo']}: {i['quantidade']} un. - R$ {i['subtotal']} (estoque: {i['estoque']})"
+                    for i in resp.corpo.get("itens", [])
+                ]
+                self.app.notify("\n".join(linhas + [f"Total: R$ {total}"]), title="Venda efetuada!", timeout=8)
                 self.dismiss()
             else:
                 lbl_erro.update(f"[red]Erro na Venda: {resp.mensagem_de_erro()}[/red]")
