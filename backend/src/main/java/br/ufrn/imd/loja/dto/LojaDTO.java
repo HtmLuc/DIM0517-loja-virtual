@@ -25,6 +25,12 @@ public final class LojaDTO
     {
       return new ProdutoDTO(entidade.getCodigo(), entidade.getPreco(), entidade.getEstoque());
     }
+
+    @Override 
+    public String toString() 
+    {
+      return "{codigo=" + codigo + ", preco=" + preco + ", estoque=" + estoque + "}";
+    }
   }
 
   public record CriarProdutoDTO(int codigo, BigDecimal preco) implements InputDTO<Produto>
@@ -44,6 +50,12 @@ public final class LojaDTO
       {
         throw new DadosInvalidosException("Preços negativos não são permitidos.");
       }
+    }
+
+    @Override 
+    public String toString() 
+    {
+      return "{codigo=" + codigo + ", preco=" + preco + "}";
     }
   }
 
