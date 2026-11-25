@@ -86,6 +86,29 @@ public class LojaService
 		return resposta;
 	}
 
+	public LojaDTO.ProdutoEstoqueDTO adicionarAoEstoque(
+		final int codigo, final LojaDTO.RetirarEstoqueDTO entradaEstoqueDTO
+	)
+	{
+		validarEntradaNoEstoque(entradaEstoqueDTO);
+
+		log.info("Entrada de estoque de {} unidades para o produto com código {}",
+			entradaEstoqueDTO.quantidade(), codigo);
+
+		final Produto produto = this.repositorio.buscar(codigo)
+			.orElseThrow(() -> new ProdutoNaoEncontradoException(codigo));
+
+		int novoEstoque = produto.getEstoque() + entradaEstoqueDTO.quantidade();
+		produto.setEstoque(novoEstoque);
+
+		final Produto atualizado = this.repositorio.salvar(produto);
+		final var resposta = LojaDTO.ProdutoEstoqueDTO.fromEntity(atualizado);
+
+		log.info("Produto atualizado com sucesso: {}", resposta);
+
+		return resposta;
+	}
+
 	public LojaDTO.VendaRespostaDTO realizarVenda(final LojaDTO.VendaDTO vendaDTO) 
 	{
 		log.info("Realizando venda: {}", vendaDTO);
@@ -150,6 +173,19 @@ public class LojaService
 			throw new EstoqueInsuficienteException("Não foi possível realizar a saída de estoque. " 
 				+ "A quantidade a ser retirada supera a armazenada."
 			);
+		}
+	}
+
+	private void validarEntradaNoEstoque(final LojaDTO.RetirarEstoqueDTO entradaEstoqueDTO)
+	{
+		if (entradaEstoqueDTO == null)
+		{
+			throw new DadosInvalidosException("Quantidade é obrigatória.");
+		}
+
+		if (entradaEstoqueDTO.quantidade() <= 0)
+		{
+			throw new DadosInvalidosException("Quantidade deve ser positiva.");
 		}
 	}
 
