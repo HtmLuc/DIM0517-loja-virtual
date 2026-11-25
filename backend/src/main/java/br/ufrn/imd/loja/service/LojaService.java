@@ -1,5 +1,11 @@
 package br.ufrn.imd.loja.service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -76,6 +82,58 @@ public class LojaService
 		final var resposta = LojaDTO.ProdutoEstoqueDTO.fromEntity(atualizado);
 
 		log.info("Produto atualizado com sucesso: {}", resposta);
+
+		return resposta;
+	}
+
+	public LojaDTO.VendaRespostaDTO realizarVenda(final LojaDTO.VendaDTO vendaDTO) 
+	{
+		log.info("Realizando venda: {}", vendaDTO);
+		vendaDTO.validar();
+
+		// Soma as quantidades por produto (o mesmo produto pode aparecer mais de uma vez)
+		final Map<Integer, Integer> quantidadePorCodigo = new HashMap<>();
+		for (final LojaDTO.ItemVendaDTO item : vendaDTO.itens()) 
+		{
+			quantidadePorCodigo.merge(item.codigo(), item.quantidade(), Integer::sum);
+		}
+
+		// Valida todos os itens antes de alterar qualquer estoque (venda atômica)
+		final Map<Integer, Produto> produtos = new HashMap<>();
+		for (final int codigo : quantidadePorCodigo.keySet()) 
+		{
+			final Produto produto = this.repositorio.buscar(codigo)
+				.orElseThrow(() -> new ProdutoNaoEncontradoException(codigo));
+			produtos.put(codigo, produto);
+		}
+		for (final Map.Entry<Integer, Integer> entrada : quantidadePorCodigo.entrySet()) 
+		{
+			validarSaidaDoEstoque(produtos.get(entrada.getKey()), entrada.getValue());
+		}
+
+		// Todos os itens são válidos: agora altera o estoque
+		for (final Map.Entry<Integer, Integer> entrada : quantidadePorCodigo.entrySet()) 
+		{
+			final Produto produto = produtos.get(entrada.getKey());
+			produto.setEstoque(produto.getEstoque() - entrada.getValue());
+			this.repositorio.salvar(produto);
+		}
+
+		BigDecimal total = BigDecimal.ZERO;
+		final List<LojaDTO.ItemVendidoDTO> itensVendidos = new ArrayList<>();
+		for (final LojaDTO.ItemVendaDTO item : vendaDTO.itens()) 
+		{
+			final Produto produto = produtos.get(item.codigo());
+			final BigDecimal subtotal = produto.getPreco().multiply(BigDecimal.valueOf(item.quantidade()));
+			total = total.add(subtotal);
+			itensVendidos.add(new LojaDTO.ItemVendidoDTO(
+				produto.getCodigo(), item.quantidade(), subtotal, produto.getEstoque()
+			));
+		}
+
+		final var resposta = new LojaDTO.VendaRespostaDTO(total, itensVendidos);
+
+		log.info("Venda realizada com sucesso: {}", resposta);
 
 		return resposta;
 	}
