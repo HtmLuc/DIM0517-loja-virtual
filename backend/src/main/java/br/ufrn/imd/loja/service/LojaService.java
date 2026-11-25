@@ -41,6 +41,20 @@ public class LojaService
 		return resposta;
 	}
 
+	public LojaDTO.ProdutoEstoqueDTO consultarEstoque(final int codigo) 
+	{
+		log.info("Consultando estoque do produto com código {}", codigo);
+
+		final Produto produto = this.repositorio.buscar(codigo)
+			.orElseThrow(() -> new ProdutoNaoEncontradoException(codigo));
+
+		final var resposta = LojaDTO.ProdutoEstoqueDTO.fromEntity(produto);
+
+		log.info("Estoque consultado com sucesso: {}", resposta);
+
+		return resposta;
+	}
+
 	public LojaDTO.ProdutoEstoqueDTO retirarDoEstoque(
 		final int codigo, final LojaDTO.RetirarEstoqueDTO retirarEstoqueDTO
 	) 
