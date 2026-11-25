@@ -1,0 +1,9 @@
+# Normaliza finais de linha de arquivos de texto para LF no repositório
+* text=auto
+
+# Scripts do Gradle precisam manter o final de linha da plataforma de destino
+gradlew text eol=lf
+*.bat text eol=crlf
+
+# Binários
+*.jar binary
