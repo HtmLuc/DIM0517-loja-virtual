@@ -1,5 +1,6 @@
 package br.ufrn.imd.loja.api;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -24,6 +25,12 @@ public class LojaController {
   public LojaDTO.ProdutoDTO cadastrarProduto(@RequestBody LojaDTO.CriarProdutoDTO criarProdutoDTO) 
   {
     return lojaService.cadastrarProduto(criarProdutoDTO);
+  }
+   
+  @GetMapping("/produto/{codigo}/estoque")
+  public LojaDTO.ProdutoEstoqueDTO consultarEstoque(@PathVariable("codigo") final int codigo) 
+  {
+    return lojaService.consultarEstoque(codigo);
   }
 
   @PutMapping("/produto/{codigo}/saida")
