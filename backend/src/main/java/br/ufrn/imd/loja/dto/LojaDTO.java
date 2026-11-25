@@ -1,6 +1,7 @@
 package br.ufrn.imd.loja.dto;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import br.ufrn.imd.loja.model.Produto;
 import br.ufrn.imd.loja.service.exception.DadosInvalidosException;
@@ -83,5 +84,47 @@ public final class LojaDTO
         throw new DadosInvalidosException("Quantidade deve ser positiva.");
       }
     }
+  }
+  
+  public record ItemVendaDTO(int codigo, int quantidade)
+  {
+    public void validar() 
+    {
+      if (codigo == 0)
+      {
+        throw new DadosInvalidosException("Código 0 não é permitido.");
+      }
+      if (quantidade <= 0) 
+      {
+        throw new DadosInvalidosException("Quantidade deve ser positiva.");
+      }
+    }
+  }
+
+  public record VendaDTO(List<ItemVendaDTO> itens)
+  {
+    public void validar() 
+    {
+      if (itens == null || itens.isEmpty())
+      {
+        throw new DadosInvalidosException("A venda deve ter pelo menos um item.");
+      }
+      for (final ItemVendaDTO item : itens)
+      {
+        if (item == null)
+        {
+          throw new DadosInvalidosException("Item da venda inválido.");
+        }
+        item.validar();
+      }
+    }
+  }
+
+  public record ItemVendidoDTO(int codigo, int quantidade, BigDecimal subtotal, int estoque)
+  {
+  }
+
+  public record VendaRespostaDTO(BigDecimal total, List<ItemVendidoDTO> itens)
+  {
   }
 }
