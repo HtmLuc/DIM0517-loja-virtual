@@ -7,7 +7,6 @@ import br.ufrn.imd.loja.service.exception.DadosInvalidosException;
 
 public final class LojaDTO 
 {
-
   private interface InputDTO<T> 
   {
     T toEntity();
@@ -59,4 +58,30 @@ public final class LojaDTO
     }
   }
 
+  public record ProdutoEstoqueDTO(int codigo, int estoque) implements OutputDTO<Produto>
+  {
+    public static ProdutoEstoqueDTO fromEntity(final Produto entidade) 
+    {
+      return new ProdutoEstoqueDTO(entidade.getCodigo(), entidade.getEstoque());
+    }
+  }
+
+  public record RetirarEstoqueDTO(int quantidade) implements InputDTO<Produto>
+  {
+    @Override
+    public Produto toEntity() 
+    {
+      // TODO: remover esse contrato depois, criar uma nova interface?
+      return new Produto(0, null, quantidade);
+    }
+
+    @Override
+    public void validar() 
+    {
+      if (quantidade < 0) 
+      {
+        throw new DadosInvalidosException("Quantidade deve ser positiva.");
+      }
+    }
+  }
 }
