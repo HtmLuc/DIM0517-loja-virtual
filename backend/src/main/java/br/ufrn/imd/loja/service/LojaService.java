@@ -4,7 +4,6 @@ import br.ufrn.imd.loja.repository.ProdutoRepository;
 
 public class LojaService
 {
-
 	private final ProdutoRepository repositorio;
 
 	public LojaService(ProdutoRepository repositorio)

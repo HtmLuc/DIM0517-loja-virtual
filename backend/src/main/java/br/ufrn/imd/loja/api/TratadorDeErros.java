@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import br.ufrn.imd.loja.api.dto.ErroResponse;
 import br.ufrn.imd.loja.service.exception.DadosInvalidosException;
 import br.ufrn.imd.loja.service.exception.ProdutoJaExisteException;
 import br.ufrn.imd.loja.service.exception.ProdutoNaoEncontradoException;
@@ -15,6 +14,10 @@ import br.ufrn.imd.loja.service.exception.ProdutoNaoEncontradoException;
 @RestControllerAdvice
 public class TratadorDeErros
 {
+
+	public record ErroResponse(int status, String erro)
+	{
+	}
 
 	@ExceptionHandler(DadosInvalidosException.class)
 	public ResponseEntity<ErroResponse> dadosInvalidos(DadosInvalidosException e)

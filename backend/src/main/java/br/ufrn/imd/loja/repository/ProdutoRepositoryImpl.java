@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import br.ufrn.imd.loja.model.Produto;
 
-public class ProdutoRepositoryEmMemoria implements ProdutoRepository
+public class ProdutoRepositoryImpl implements ProdutoRepository
 {
 
 	private final Map<Integer, Produto> produtos = new HashMap<>();
