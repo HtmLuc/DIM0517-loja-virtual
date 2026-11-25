@@ -56,7 +56,7 @@ class ModalCadastrarProduto(ModalScreen[None]):
             lbl_erro.update("[red]Código e preço devem ser números válidos![/red]")
             return
 
-        resp = self.cliente.post("/produtos", {"codigo": codigo, "preco": preco, "estoque": 0})
+        resp = self.cliente.post("/produto", {"codigo": codigo, "preco": preco, "estoque": 0})
         if resp.sucesso:
             self.app.notify("Produto cadastrado com sucesso!", title="Sucesso")
             self.dismiss()
@@ -94,7 +94,7 @@ class ModalConsultarEstoque(ModalScreen[None]):
             res_box.update("[red]Informe um código valido.[/red]")
             return
 
-        resp = self.cliente.get(f"/produtos/{codigo_raw}")
+        resp = self.cliente.get(f"/produto/{codigo_raw}")
         if resp.sucesso:
             estoque = resp.corpo.get("estoque", 0)
             res_box.update(f"[green]Estoque Atual:[/green] [bold]{estoque}[/bold] unidades")
@@ -141,7 +141,7 @@ class ModalAjustarEstoque(ModalScreen[None]):
             lbl_erro.update("[red]Informe código e quantidade válidos (> 0).[/red]")
             return
 
-        caminho = f"/produtos/{codigo}/{self.tipo}"
+        caminho = f"/produto/{codigo}/{self.tipo}"
         resp = self.cliente.put(caminho, {"quantidade": qtd})
 
         if resp.sucesso:
@@ -204,7 +204,7 @@ class ModalVenda(ModalScreen[None]):
                 lbl_erro.update("[red]Adicione pelo menos um item à venda.[/red]")
                 return
 
-            resp = self.cliente.post("/vendas", {"itens": self.itens})
+            resp = self.cliente.post("/venda", {"itens": self.itens})
             if resp.sucesso:
                 total = resp.corpo.get("total", "0.00")
                 self.app.notify(f"Venda efetuada! Total: R$ {total}", title="Sucesso", timeout=5)
@@ -269,7 +269,7 @@ class LojaTUIApp(App):
     }
     """
 
-    def __init__(self, url_base: str = "http://localhost:8080"):
+    def __init__(self, url_base: str = "http://localhost:8080/api/v1/loja"):
         super().__init__()
         self.cliente = LojaCliente(url_base)
 
@@ -303,7 +303,7 @@ class LojaTUIApp(App):
 
 def main():
     import sys
-    url = sys.argv[1] if len(sys.argv) > 1 else "http://localhost:8080"
+    url = "http://localhost:8080/api/v1/loja"
     app = LojaTUIApp(url_base=url)
     app.run()
 
