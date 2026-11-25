@@ -8,7 +8,15 @@ public class Produto
 	private final BigDecimal preco;
 	private int estoque;
 
-	public Produto(int codigo, BigDecimal preco) {
+	public Produto(int codigo, BigDecimal preco, int estoque) 
+	{
+		this.codigo = codigo;
+		this.preco = preco;
+		this.estoque = estoque;
+	}
+
+	public Produto(int codigo, BigDecimal preco) 
+	{
 		this.codigo = codigo;
 		this.preco = preco;
 		this.estoque = 0;

@@ -4,12 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.stereotype.Repository;
+
 import br.ufrn.imd.loja.model.Produto;
 
-public class ProdutoRepositoryEmMemoria implements ProdutoRepository
+@Repository 
+public class ProdutoRepositoryImpl implements ProdutoRepository
 {
 
-	private final Map<Integer, Produto> produtos = new HashMap<>();
+	private static final Map<Integer, Produto> produtos = new HashMap<>();
 
 	@Override
 	public Optional<Produto> buscar(int codigo)
@@ -24,9 +27,10 @@ public class ProdutoRepositoryEmMemoria implements ProdutoRepository
 	}
 
 	@Override
-	public void salvar(Produto produto)
+	public Produto salvar(Produto produto)
 	{
 		produtos.put(produto.getCodigo(), produto);
+		return produtos.get(produto.getCodigo());
 	}
 
 }

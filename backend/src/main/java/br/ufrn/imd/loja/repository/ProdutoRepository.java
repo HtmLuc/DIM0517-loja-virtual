@@ -10,6 +10,6 @@ public interface ProdutoRepository
 
 	boolean existe(int codigo);
 
-	void salvar(Produto produto);
+	Produto salvar(Produto produto);
 
 }
