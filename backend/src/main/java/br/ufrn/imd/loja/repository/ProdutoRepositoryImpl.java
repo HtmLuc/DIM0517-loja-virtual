@@ -12,7 +12,7 @@ import br.ufrn.imd.loja.model.Produto;
 public class ProdutoRepositoryImpl implements ProdutoRepository
 {
 
-	private static final Map<Integer, Produto> produtos = new HashMap<>();
+	private final Map<Integer, Produto> produtos = new HashMap<>();
 
 	@Override
 	public Optional<Produto> buscar(int codigo)
