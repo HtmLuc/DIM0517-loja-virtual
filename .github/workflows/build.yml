@@ -1,0 +1,30 @@
+name: Build em branches de feature
+
+on:
+  push:
+    branches:
+      - "feature/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "25"
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: compilar API 
+        working-directory: backend
+        run: ./gradlew classes testClasses
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: frontend/.python-version
+
+      - name: Checagem sintática do frontend
+        run: python -m compileall -q frontend
