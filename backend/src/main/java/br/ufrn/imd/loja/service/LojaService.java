@@ -14,7 +14,6 @@ import br.ufrn.imd.loja.dto.LojaDTO;
 import br.ufrn.imd.loja.model.Produto;
 import br.ufrn.imd.loja.repository.ProdutoRepository;
 import br.ufrn.imd.loja.service.exception.DadosInvalidosException;
-import br.ufrn.imd.loja.service.exception.EstoqueInsuficienteException;
 import br.ufrn.imd.loja.service.exception.ProdutoJaExisteException;
 import br.ufrn.imd.loja.service.exception.ProdutoNaoEncontradoException;
 
@@ -73,8 +72,6 @@ public class LojaService
 		final Produto produto = this.repositorio.buscar(codigo)
 			.orElseThrow(() -> new ProdutoNaoEncontradoException(codigo));
 
-		validarSaidaDoEstoque(produto, retirarEstoqueDTO.quantidade());
-
 		int novoEstoque = produto.getEstoque() - retirarEstoqueDTO.quantidade();
 		produto.setEstoque(novoEstoque);
 
@@ -114,14 +111,12 @@ public class LojaService
 		log.info("Realizando venda: {}", vendaDTO);
 		vendaDTO.validar();
 
-		// Soma as quantidades por produto (o mesmo produto pode aparecer mais de uma vez)
 		final Map<Integer, Integer> quantidadePorCodigo = new HashMap<>();
 		for (final LojaDTO.ItemVendaDTO item : vendaDTO.itens()) 
 		{
 			quantidadePorCodigo.merge(item.codigo(), item.quantidade(), Integer::sum);
 		}
 
-		// Valida todos os itens antes de alterar qualquer estoque (venda atômica)
 		final Map<Integer, Produto> produtos = new HashMap<>();
 		for (final int codigo : quantidadePorCodigo.keySet()) 
 		{
@@ -129,12 +124,7 @@ public class LojaService
 				.orElseThrow(() -> new ProdutoNaoEncontradoException(codigo));
 			produtos.put(codigo, produto);
 		}
-		for (final Map.Entry<Integer, Integer> entrada : quantidadePorCodigo.entrySet()) 
-		{
-			validarSaidaDoEstoque(produtos.get(entrada.getKey()), entrada.getValue());
-		}
 
-		// Todos os itens são válidos: agora altera o estoque
 		for (final Map.Entry<Integer, Integer> entrada : quantidadePorCodigo.entrySet()) 
 		{
 			final Produto produto = produtos.get(entrada.getKey());
@@ -159,21 +149,6 @@ public class LojaService
 		log.info("Venda realizada com sucesso: {}", resposta);
 
 		return resposta;
-	}
-
-	private void validarSaidaDoEstoque(final Produto produto, final int quantidade)
-	{
-    if (quantidade < 0) 
-    {
-      throw new DadosInvalidosException("Quantidade deve ser positiva.");
-    }
-
-		if (produto.getEstoque() < quantidade) 
-		{
-			throw new EstoqueInsuficienteException("Não foi possível realizar a saída de estoque. " 
-				+ "A quantidade a ser retirada supera a armazenada."
-			);
-		}
 	}
 
 	private void validarEntradaNoEstoque(final LojaDTO.RetirarEstoqueDTO entradaEstoqueDTO)

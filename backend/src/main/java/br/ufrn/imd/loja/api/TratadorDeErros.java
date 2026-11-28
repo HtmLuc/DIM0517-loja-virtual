@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import br.ufrn.imd.loja.service.exception.DadosInvalidosException;
-import br.ufrn.imd.loja.service.exception.EstoqueInsuficienteException;
 import br.ufrn.imd.loja.service.exception.ProdutoJaExisteException;
 import br.ufrn.imd.loja.service.exception.ProdutoNaoEncontradoException;
 
@@ -46,12 +45,6 @@ public class TratadorDeErros
 
 	@ExceptionHandler(ProdutoJaExisteException.class)
 	public ResponseEntity<ErroResponse> produtoJaExiste(ProdutoJaExisteException e)
-	{
-		return erro(HttpStatus.CONFLICT, e.getMessage());
-	}
-
-	@ExceptionHandler(EstoqueInsuficienteException.class)
-	public ResponseEntity<ErroResponse> estoqueInsuficiente(final EstoqueInsuficienteException e) 
 	{
 		return erro(HttpStatus.CONFLICT, e.getMessage());
 	}
